@@ -1,0 +1,23 @@
+nav.navbar, button{
+    background:#f2bf35;
+}
+
+nav.navbar a {
+    color:black;
+}
+
+main {
+    padding-top: 25px;
+}
+
+#CurrentFood, #vis1, #vis2 {
+    margin-top:15px;
+}
+
+.ui-widget-header, .saveButton{
+    background: #f2bf35;
+}
+
+.saveButton {
+    float: left;
+}
