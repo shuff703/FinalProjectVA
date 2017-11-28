@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -12,112 +13,145 @@
     <script type="text/javascript" src="/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/css/bootstrap-grid.min.css" />
-    <link rel="stylesheet" href="/css/bootstrap-reboot.min.css"/>
+    <link rel="stylesheet" href="/css/bootstrap-reboot.min.css" />
     <!--jQuery UI-->
-    <link href="/jquery-ui-1.12.1/jquery-ui.css" rel="stylesheet"/>
+    <link href="/jquery-ui-1.12.1/jquery-ui.css" rel="stylesheet" />
     <script type="text/javascript" src="/jquery-ui-1.12.1/jquery-ui.js"></script>
     <!--DataTables-->
     <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
-    <link rel="stylesheet" href="/css/main.css"/>
-    
-    
+    <link rel="stylesheet" href="/css/main.css" />
+    <script type="text/javascript" src="/js/script.js"></script>
+
 </head>
+
 <body>
-<header>
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">ComeUpWithAName</a>
+    <header>
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">ComeUpWithAName</a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <a href="#">Home</a>
+                    </li>
+                </ul>
             </div>
-            <ul class="nav navbar-nav">
-                <li class="active">
-                    <a href="#">Home</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-</header>
-<main>
-    <div class="col-md-2 offset-md-1">
-        <div class="row">
-            <button id="AddFood">
+        </nav>
+    </header>
+    <main>
+        <div class="col-md-2 offset-md-1">
+            <div class="row">
+                <button id="AddFood">
                 Add Food
             </button>
+            </div>
         </div>
-    </div>
-    <div id="FoodModal">
-        <table id="AllFood">
-            <th>
-                <td></td>
-                <td>Item</td>
-                <td>Category</td>
-                <td>Serving Size</td>
-                <td>Calories</td>
-                <td>Total Fat</td>
-                <td>Cholesterol</td>
-                <td>Sodium</td>
-                <td>Sugars</td>
-                <td>Protein</td>
-            </th>
-        </table>
-    </div>
-    <div class="clearfix"></div>
-    <div class="col-md-10 offset-md-1">
-        <table id="CurrentFood">
-            <th>
-                <td></td>
-                <td>Item</td>
-                <td>Category</td>
-                <td>Serving Size</td>
-                <td>Calories</td>
-                <td>Total Fat</td>
-                <td>Cholesterol</td>
-                <td>Sodium</td>
-                <td>Sugars</td>
-                <td>Protein</td>
-            </th>
-        </table>
-    </div>
-    <div id="vis1" class="col-md-10 offset-md-1"><p>No Food Added</p></div>
-    <div id="vis2" class="col-md-10 offset-md-1"><p></p></div>
-</main>
-<hr />
-<footer class="container">
+        <div id="FoodModal">
+            <table id="AllFood">
+                <thead>
+                    <tr>
+                        <th style="width:5%"></th>
+                        <th style="width:25%">Item</th>
+                        <th style="width:13%">Category</th>
+                        <th style="width:15%">Serving Size</th>
+                        <th style="width:7%">Calories</th>
+                        <th style="width:7%">Total Fat</th>
+                        <th style="width:7%">Cholesterol</th>
+                        <th style="width:7%">Sodium</th>
+                        <th style="width:7%">Sugars</th>
+                        <th style="width:7%">Protein</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-md-10 offset-md-1">
+            <table id="CurrentFood">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Item</th>
+                        <th>Category</th>
+                        <th>Serving Size</th>
+                        <th>Calories</th>
+                        <th>Total Fat</th>
+                        <th>Cholesterol</th>
+                        <th>Sodium</th>
+                        <th>Sugars</th>
+                        <th>Protein</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div id="vis1" class="col-md-10 offset-md-1">
+            <p>No Food Added</p>
+        </div>
+        <div id="vis2" class="col-md-10 offset-md-1">
+            <p></p>
+        </div>
+    </main>
+    <hr />
+    <footer class="container">
 
-</footer>
-<script>
-    //Page load functions
-    $(document).ready(function(){
-       
-    });
+    </footer>
+    <script>
+        var CurrentFoodTable = null;
+        //Page load functions
+        $(document).ready(function() {
+            CurrentFoodTable = $('#CurrentFood').DataTable();
+        });
 
-    //Modal to add food
-    var foodModal = $('#FoodModal').dialog({
-        autoOpen: false,
-        width: 950,
-        title: 'Add Food',
-        buttons: [
-            {
-                text: "Ok",
-                class: 'saveButton',
-                click: function() {
-                    $( this ).dialog( "close" );
+        //Modal to add food
+        var foodModal = $('#FoodModal').dialog({
+            autoOpen: false,
+            width: 1100,
+            title: 'Add Food',
+            buttons: [{
+                    text: "Ok",
+                    class: 'saveButton',
+                    click: function() {
+                        $(this).dialog("close");
+                    }
+                },
+                {
+                    text: "Cancel",
+                    click: function() {
+                        $(this).dialog("close");
+                    }
                 }
-            },
-            {
-                text: "Cancel",
-                click: function() {
-                    $( this ).dialog( "close" );
-                }
-            }
-        ]
-    });
+            ]
+        });
 
-    //events
-    $('#AddFood').on('click', function (event) {
-        foodModal.dialog('open');
-        event.preventDefault();
-    });
-</script>
+        //events
+        $('#AddFood').on('click', function(event) {
+            foodModal.dialog('open');
+            AllFoodTable.draw();
+            event.preventDefault();
+        });
+
+        $('.saveButton').on('click', function(event) {
+            var boxes = $('#AllFood input[type="checkbox"]:checked');
+            $.each(boxes, function(i) {
+                var tr = $(this).closest('tr');
+                CurrentFoodTable.row.add({
+                    'item': tr.children()[1].innerHTML,
+                    'category': tr.children()[2].innerHTML,
+                    'servingSize': tr.children()[3].innerHTML,
+                    'calories': tr.children()[4].innerHTML,
+                    'fat': tr.children()[5].innerHTML,
+                    'cholesterol': tr.children()[6].innerHTML,
+                    'sodium': tr.children()[7].innerHTML,
+                    'sugar': tr.children()[8].innerHTML,
+                    'protein': tr.children()[9].innerHTML
+                });
+                CurrentFoodTable.draw();
+            });
+        });
+
+    </script>
 </body>
+
 </html>
