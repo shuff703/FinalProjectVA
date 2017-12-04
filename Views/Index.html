@@ -19,6 +19,7 @@
     <script type="text/javascript" src="/jquery-ui-1.12.1/jquery-ui.js"></script>
     <!--DataTables-->
     <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
     <link rel="stylesheet" href="/css/main.css" />
     <script type="text/javascript" src="/js/script.js"></script>
 
@@ -67,7 +68,7 @@
             </table>
         </div>
         <div class="clearfix"></div>
-        <div class="col-md-10 offset-md-1">
+        <div class="col-md-10 offset-md-1" style="margin-top:15px">
             <table id="CurrentFood">
                 <thead>
                     <tr>
@@ -86,6 +87,8 @@
                 <tbody></tbody>
             </table>
         </div>
+        <div class="col-md-10 offset-md-1" id="plot">
+        </div>
         <div id="vis1" class="col-md-10 offset-md-1">
             <p>No Food Added</p>
         </div>
@@ -98,7 +101,7 @@
 
     </footer>
     <script>
-        var CurrentFoodTable = null;
+        var currentData = [];
         //Page load functions
         $(document).ready(function() {
             CurrentFoodTable = $('#CurrentFood').DataTable();
@@ -132,25 +135,33 @@
             event.preventDefault();
         });
 
+        $('#CurrentFood').on('draw.dt', function() {
+        
+            if (CurrentFoodTable != null && CurrentFoodTable.page.info().recordsTotal > 0) {
+                console.log(CurrentFoodTable.page.info().recordsTotal);
+                scatterplot(CurrentFoodTable.rows().data());
+            }
+            else if(jsonData != null){
+                $('div.col-md-10').eq('0').hide();
+                scatterplot(jsonData);
+            }
+        });
+
         $('.saveButton').on('click', function(event) {
             var boxes = $('#AllFood input[type="checkbox"]:checked');
             $.each(boxes, function(i) {
                 var tr = $(this).closest('tr');
-                CurrentFoodTable.row.add({
-                    'item': tr.children()[1].innerHTML,
-                    'category': tr.children()[2].innerHTML,
-                    'servingSize': tr.children()[3].innerHTML,
-                    'calories': tr.children()[4].innerHTML,
-                    'fat': tr.children()[5].innerHTML,
-                    'cholesterol': tr.children()[6].innerHTML,
-                    'sodium': tr.children()[7].innerHTML,
-                    'sugar': tr.children()[8].innerHTML,
-                    'protein': tr.children()[9].innerHTML
-                });
-                CurrentFoodTable.draw();
+                var temp = AllFoodTable.row(tr).data();
+                CurrentFoodTable.row.add(temp);
+                $('div.col-md-10').eq('0').show();
             });
+            CurrentFoodTable.draw();
         });
 
+        $('#CurrentFood').on('click', '.removeItem', function(event) {
+            var tr = $(this).closest('tr');
+            CurrentFoodTable.row(tr).remove().draw();
+        });
     </script>
 </body>
 

@@ -11,7 +11,7 @@ main {
 }
 
 #CurrentFood, #vis1, #vis2 {
-    margin-top:15px;
+    margin-top:25px;
 }
 
 .ui-widget-header, .saveButton{
@@ -20,4 +20,13 @@ main {
 
 .saveButton {
     float: left;
+}
+
+.tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: #c3c3c3;
+    border-radius:25px;
+    padding:10px;
+    font-size:.65em;
 }
