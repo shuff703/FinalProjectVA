@@ -89,6 +89,66 @@
         </div>
         <div class="col-md-10 offset-md-1" id="plot">
         </div>
+        <div class="col-md-10 offset-md-1" id="scatterFilter">
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="xLabel">X-Label:</label>
+                    <select id="xLabel" name="xLabel">
+                        <option value="calories">Calories</option>
+                        <option value="caloriesFat">
+                            Calories from Fat
+                        </option>
+                        <option value="fat">Fat</option>
+                        <option value="fatPercent">Fat %dv</option>
+                        <option value="saturatedFat">Saturated Fat</option>
+                        <option value="saturatedPercent">Saturated Fat %dv</option>
+                        <option value="transFat">Trans Fat</option>
+                        <option value="cholesterol">Cholesterol</option>
+                        <option value="cholesterolPercent">Cholesterol %dv</option>
+                        <option value="sodium">Sodium</option>
+                        <option value="sodiumPercent">Sodium %dv</option>
+                        <option value="carbs">Carbohydrates</option>
+                        <option value="carbPercent">Carbohydrates %dv</option>
+                        <option value="fiber">Fiber</option>
+                        <option value="fiberPercent">Fiber %dv</option>
+                        <option value="sugar">Sugar</option>
+                        <option value="protein">Protein</option>
+                        <option value="vitaminA">Vitamin A</option>
+                        <option value="vitaminC">Vitamin C</option>
+                        <option value="calcium">Calcium</option>
+                        <option value="iron">Iron</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="yLabel">Y-Label:</label>
+                    <select id="yLabel" name="yLabel">
+                        <option value="calories">Calories</option>
+                        <option value="caloriesFat">
+                            Calories from Fat
+                        </option>
+                        <option value="fat">Fat</option>
+                        <option value="fatPercent">Fat %dv</option>
+                        <option value="saturatedFat">Saturated Fat</option>
+                        <option value="saturatedPercent">Saturated Fat %dv</option>
+                        <option value="transFat">Trans Fat</option>
+                        <option value="cholesterol">Cholesterol</option>
+                        <option value="cholesterolPercent">Cholesterol %dv</option>
+                        <option value="sodium">Sodium</option>
+                        <option value="sodiumPercent">Sodium %dv</option>
+                        <option value="carbs">Carbohydrates</option>
+                        <option value="carbPercent">Carbohydrates %dv</option>
+                        <option value="fiber">Fiber</option>
+                        <option value="fiberPercent">Fiber %dv</option>
+                        <option value="sugar">Sugar</option>
+                        <option value="protein">Protein</option>
+                        <option value="vitaminA">Vitamin A</option>
+                        <option value="vitaminC">Vitamin C</option>
+                        <option value="calcium">Calcium</option>
+                        <option value="iron">Iron</option>
+                    </select>
+                </div>
+            </div>
+        </div>
         <div id="vis1" class="col-md-10 offset-md-1">
             <p>No Food Added</p>
         </div>
@@ -136,12 +196,11 @@
         });
 
         $('#CurrentFood').on('draw.dt', function() {
-        
+
             if (CurrentFoodTable != null && CurrentFoodTable.page.info().recordsTotal > 0) {
                 console.log(CurrentFoodTable.page.info().recordsTotal);
                 scatterplot(CurrentFoodTable.rows().data());
-            }
-            else if(jsonData != null){
+            } else if (jsonData != null) {
                 $('div.col-md-10').eq('0').hide();
                 scatterplot(jsonData);
             }
@@ -161,6 +220,14 @@
         $('#CurrentFood').on('click', '.removeItem', function(event) {
             var tr = $(this).closest('tr');
             CurrentFoodTable.row(tr).remove().draw();
+        });
+        
+        $('#xLabel').on('change', function () {
+           CurrentFoodTable.draw(); 
+        });
+        
+        $('#yLabel').on('change', function () {
+           CurrentFoodTable.draw(); 
         });
     </script>
 </body>

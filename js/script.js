@@ -120,28 +120,7 @@ $(document).ready(function () {
 
 });
 
-/*function scatterPlot() {
-    var rowData = [];
-    $('#CurrentFood tbody tr').each(function () {
-        $(this).children().each(function (i) {
-            var temp = {
-                category: $(this).eq(2).text().trim(),
-                servingSize: $(this).eq(3).text().trim(),
-                calories: $(this).eq(4).text().trim(),
-                fat: $(this).eq(5).text().trim(),
-                cholesterol: $(this).eq(6).text().trim(),
-                sodium: $(this).eq(7).text().trim(),
-                sugar: $(this).eq(8).text().trim(),
-                protein: $(this).eq(9).text().trim()
-            }
-            rowData.push(temp);
 
-        });
-    });
-    if (rowData.length > 0) {
-        alert('gucci gang, gucci gang, gucci gang');
-    }
-}*/
 //JSON Object for UI
 class MenuData {
     constructor(text) {
@@ -193,7 +172,10 @@ class MenuData {
 //Psychopath D3 function for scatterplot
 function scatterplot(jData) {
     $('#plot').html('');
-    console.log(jData);
+    var xVal = $('#xLabel').val();
+    var yVal = $('#yLabel').val();
+    var xLabelName = $('#xLabel option[value="' + xVal + '"]').text();
+    var yLabelName = $('#yLabel option[value="' + yVal + '"]').text();
     var margin = {
             top: 20,
             right: 20,
@@ -205,23 +187,23 @@ function scatterplot(jData) {
 
     // setup x 
     var xValue = function (d) {
-            return d.calories;
-        }, // data -> value
+            return d[xVal];
+        },
         xScale = d3.scale.linear().range([0, width]), // value -> display
         xMap = function (d) {
             return xScale(xValue(d));
-        }, // data -> display
+        },
         xAxis = d3.svg.axis().scale(xScale).orient("bottom");
 
     // setup y
     var yValue = function (d) {
-            return d.fat;
-        }, // data -> value
+            return d[yVal];
+        },
         yScale = d3.scale.linear().range([height, 0]),
 
         yMap = function (d) {
             return yScale(yValue(d));
-        }, // data -> display
+        },
         yAxis = d3.svg.axis().scale(yScale).orient("left");
 
     // setup fill color
@@ -254,7 +236,7 @@ function scatterplot(jData) {
         .attr("x", width)
         .attr("y", -6)
         .style("text-anchor", "end")
-        .text("Calories");
+        .text(xLabelName);
     // y-axis
     svg.append("g")
         .attr("class", "y axis")
@@ -265,13 +247,16 @@ function scatterplot(jData) {
         .attr("y", 6)
         .attr("dy", ".71em")
         .style("text-anchor", "end")
-        .text("Fat");
+        .text(yLabelName);
 
     // draw dots
     svg.selectAll(".dot")
         .data(jData)
         .enter().append("circle")
         .attr("class", "dot")
+        .attr('class', function (d) {
+            return d.category;
+        })
         .attr("r", 5)
         .attr("cx", xMap)
         .attr("cy", yMap)
@@ -285,6 +270,7 @@ function scatterplot(jData) {
                 .style("opacity", .8);
             var x = Number(d3.select(this).attr("cx")) + 65;
             var y = Number(d3.select(this).attr('cy')) -150;
+            //Most rediculous string of all time
             tooltip.html(d["item"] + "<br/>Calories: " + d.calories + 'g, ' + d.caloriesFat + ' from fat<br/>Fat:' +
                 d.fat + 'g (' + d.fatPercent + '% daily value), Trans Fat: ' + d.transFat + 'g<br/>Saturated Fat: ' + + d.saturatedFat + 'g (' + d.saturatedPercent + '% daily value)<br/>Cholesterol: ' + d.cholesterol +
                 'g (' + d.cholesterolPercent + '% daily value)<br/>Sodium: ' + d.sodium + 'g (' + d.sodiumPercent + '% daily value)<br/>Carbs: ' + d.carbs + 'g (' + d.carbPercent + '% daily value)<br/>Fiber: ' + 
