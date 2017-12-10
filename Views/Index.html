@@ -48,6 +48,9 @@
             </button>
             </div>
         </div>
+        <div class="col-md-6" style="text-align:center">
+            <h2>Explore the Menu</h2>
+        </div>
         <div id="FoodModal">
             <table id="AllFood">
                 <thead>
@@ -92,8 +95,8 @@
         <div class="col-md-10 offset-md-1" id="scatterFilter">
             <div class="row">
                 <div class="col-md-4">
-                    <label for="xLabel">X-Label:</label>
-                    <select id="xLabel" name="xLabel">
+                    <label for="yLabel">Y-Label:</label>
+                    <select id="yLabel" name="yLabel">
                         <option value="calories">Calories</option>
                         <option value="caloriesFat">
                             Calories from Fat
@@ -120,8 +123,8 @@
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label for="yLabel">Y-Label:</label>
-                    <select id="yLabel" name="yLabel">
+                    <label for="xLabel">X-Label:</label>
+                    <select id="xLabel" name="xLabel">
                         <option value="calories">Calories</option>
                         <option value="caloriesFat">
                             Calories from Fat
@@ -200,11 +203,20 @@
             if (CurrentFoodTable != null && CurrentFoodTable.page.info().recordsTotal > 0) {
                 console.log(CurrentFoodTable.page.info().recordsTotal);
                 scatterplot(CurrentFoodTable.rows().data());
+                $('h2').html('Your Tray');
+                $('#vis1').html('');
+                barChart.draw(CurrentFoodTable.rows().data());
             } else if (jsonData != null) {
                 $('div.col-md-10').eq('0').hide();
                 scatterplot(jsonData);
+                $('h2').html('Explore the Menu');
             }
         });
+        
+        $(window).on('resize', function () {
+            $('#vis1').html('');
+            barChart.draw(CurrentFoodTable.rows().data());
+        })
 
         $('.saveButton').on('click', function(event) {
             var boxes = $('#AllFood input[type="checkbox"]:checked');

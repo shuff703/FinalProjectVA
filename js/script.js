@@ -168,7 +168,30 @@ class MenuData {
     }
 }
 
+function changeXAxis() {
+    // d3.select("#xlabel").text(elem);
+    xLabel = elem;
+    xScale.domain([d3.min(cerealData, xValue) - 1, d3.max(cerealData, xValue) + 1]);
+    svg.selectAll(".x.axis")
+        .call(xAxis).select(".label").text(xLabel);
+    changePos();
+};
 
+function changeYAxis() {
+    // d3.select("#ylabel").text(x);
+    yScale.domain([d3.min(cerealData, yValue) - 1, d3.max(cerealData, yValue) + 1]);
+    svg.selectAll(".y.axis")
+        .call(yAxis).select(".label").text(yLabel);
+    changePos();
+};
+
+function changePos() {
+    svg.selectAll("circle")
+        .transition()
+        .duration(500)
+        .attr("cx", xMap)
+        .attr("cy", yMap);
+}
 //Psychopath D3 function for scatterplot
 function scatterplot(jData) {
     $('#plot').html('');
@@ -189,7 +212,7 @@ function scatterplot(jData) {
     var xValue = function (d) {
             return d[xVal];
         },
-        xScale = d3.scale.linear().range([0, width]), // value -> display
+        xScale = d3.scale.linear().range([0, width]),
         xMap = function (d) {
             return xScale(xValue(d));
         },
@@ -224,8 +247,8 @@ function scatterplot(jData) {
         .attr("class", "tooltip")
         .style("opacity", 0);
     // don't want dots overlapping axis, so add in buffer to data domain
-    xScale.domain([d3.min(jData, xValue) - 1, d3.max(jData, xValue)*1.25]);
-    yScale.domain([d3.min(jData, yValue) - 1, d3.max(jData, yValue)*1.25]);
+    xScale.domain([d3.min(jData, xValue) - 1, d3.max(jData, xValue) * 1.25]);
+    yScale.domain([d3.min(jData, yValue) - 1, d3.max(jData, yValue) * 1.25]);
     // x-axis
     svg.append("g")
         .attr("class", "x axis")
@@ -263,22 +286,22 @@ function scatterplot(jData) {
         .style("fill", function (d) {
             return color(cValue(d));
         })
-        .on("mouseover", function(d) {
+        .on("mouseover", function (d) {
             d3.select(this).attr("r", 15);
             tooltip.transition()
                 .duration(200)
                 .style("opacity", .8);
             var x = Number(d3.select(this).attr("cx")) + 65;
-            var y = Number(d3.select(this).attr('cy')) -150;
+            var y = Number(d3.select(this).attr('cy')) - 150;
             //Most rediculous string of all time
             tooltip.html(d["item"] + "<br/>Calories: " + d.calories + 'g, ' + d.caloriesFat + ' from fat<br/>Fat:' +
-                d.fat + 'g (' + d.fatPercent + '% daily value), Trans Fat: ' + d.transFat + 'g<br/>Saturated Fat: ' + + d.saturatedFat + 'g (' + d.saturatedPercent + '% daily value)<br/>Cholesterol: ' + d.cholesterol +
-                'g (' + d.cholesterolPercent + '% daily value)<br/>Sodium: ' + d.sodium + 'g (' + d.sodiumPercent + '% daily value)<br/>Carbs: ' + d.carbs + 'g (' + d.carbPercent + '% daily value)<br/>Fiber: ' + 
-                d.fiber + 'g (' + d.fiberPercent + '% daily value)<br/>Sugar: ' + d.sugar + 'g<br/>Protein: ' + d.protein + 'g')
+                    d.fat + 'g (' + d.fatPercent + '% daily value), Trans Fat: ' + d.transFat + 'g<br/>Saturated Fat: ' + +d.saturatedFat + 'g (' + d.saturatedPercent + '% daily value)<br/>Cholesterol: ' + d.cholesterol +
+                    'g (' + d.cholesterolPercent + '% daily value)<br/>Sodium: ' + d.sodium + 'g (' + d.sodiumPercent + '% daily value)<br/>Carbs: ' + d.carbs + 'g (' + d.carbPercent + '% daily value)<br/>Fiber: ' +
+                    d.fiber + 'g (' + d.fiberPercent + '% daily value)<br/>Sugar: ' + d.sugar + 'g<br/>Protein: ' + d.protein + 'g')
                 .style("left", x + "px")
                 .style("top", y + "px");
         })
-        .on("mouseout", function(d) {
+        .on("mouseout", function (d) {
             d3.select(this).style("fill", color(cValue(d))).attr("r", 5);
             tooltip.transition()
                 .duration(500)
@@ -312,4 +335,74 @@ function scatterplot(jData) {
         .text(function (d) {
             return d;
         });
+}
+
+var barChart = {
+    margin: { top: 20, right: 50, bottom:300, left: 100 },
+    width: function () { return $('#vis1').outerWidth(); },
+    height: function () { return 1000 - this.margin.top - this.margin.bottom },
+    svg: function () {
+            return d3.select('#vis1').append('svg').attr('width', this.width()+this.margin.left+this.margin.right)
+            .attr('height', this.height+this.margin.top+this.margin.bottom).append('g')
+            .attr('transform', 'translate('+this.margin.left+','+this.margin.top+')')
+    },
+    draw: function (jData) {
+        var headers = ['fat', 'cholesterol', 'sodium', 'carbs', 'fiber', 'sugar', 'protein', 'vitaminA', 'vitaminC', 'calcium', 'iron'];
+        var layers = d3.layout.stack()(headers.map(function(header) {
+        return jData.map(function(d) {
+          return {x: d.item, y: +d[header]};
+        });
+    }));
+        /*var layers = d3.layout.stack(function (d){
+            return { x: d.item, y: d.fat+d.cholesterol+d.sodium+d.carbs+d.fiber+d.sugar+d.protein+d.vitaminA+d.vitaminC+d.calcium+d.iron };                                             
+        });*/
+        var svg = d3.select('#vis1').append('svg').attr("preserveAspectRatio", "xMinYMin meet")
+                    .attr("viewBox", "0 0 1000 1000").append('g')
+                    .attr('transform', 'translate('+this.margin.left+','+this.margin.top+')');
+        var yGroupMax = d3.max(layers, function (layer) { return d3.max(layer, function (d) { return d.y; } )});
+        var yMax = d3.max(layers, function (layer) { return d3.max(layer, function (d) { return d.y0 + d.y; })});
+        
+        var xScale = d3.scale.ordinal()
+                        .domain(layers[0].map(function (d) { return d.x; }))
+                        .rangeRoundBands([25, 500], .08);
+        
+        var y = d3.scale.linear()
+                    .domain([0, yMax])
+                    .range([this.height(), 0]);
+        
+        var color = d3.scale.ordinal().domain(headers).range(['#edc948', '#4e79a7', '#f28e2b', '#b07aa1', '#e15759', '#ff9da7', '#76b7b2', '#9c755f', '#59a14f', '#bab0ac', '#000000']);
+        
+        var xAxis = d3.svg.axis().scale(xScale).tickSize(0).tickPadding(6).orient('bottom');
+        
+        var yAxis = d3.svg.axis().scale(y).orient('left');
+        
+        var layer = svg.selectAll('.layer').data(layers).enter().append('g').attr('class', 'layer')
+                        .style('fill', function (d, i) { return color(i); });
+        
+        var rect = layer.selectAll('rect').data(function (d) { return d; }).enter().append('rect')
+                        .attr('x', function (d) { return xScale(d.x)})
+                        .attr('y', 380)
+                        .attr('width', xScale.rangeBand())
+                        .attr('height', 0);
+        
+        rect.transition().delay(function (d, i) { return i * 10 })
+                .attr('y', function (d) { return y(d.y0 + d.y); })
+                .attr('height', function (d) { return y(d.y0) - y(d.y0 + d.y); });
+        
+        svg.append('g').attr('class', 'x axis').attr('transform', 'translate(0,' + this.height() + ')')
+                .call(xAxis).selectAll('text').style('text-anchor', 'end').attr('dx', '-.8em').attr('dy', '.15em')
+                .attr('transform', function (d) { return 'rotate(-45)'; });
+        
+        svg.append('g').attr('class', 'y axis').attr('transform', 'translate(20, 0)').call(yAxis).append('text')
+                .attr('transform', 'rotate(-90)').attr({ 'x': -150, 'y': -70 }).attr('dy', '.75em')
+                .style('text-anchor', 'end').text('Items');
+        
+        var legend = svg.selectAll('.legend').data(headers.slice().reverse()).enter().append('g').attr('class', 'legend')
+                            .attr('transform', function (d, i) { return 'translate(-20, ' + i * 20 + ')' });
+        
+        legend.append('rect').attr('x', jData.length*this.width()/jData.length - 18).attr('width', 18).attr('height', 18).style('fill', color);
+        
+        legend.append('text').attr('x', jData.length*this.width()/jData.length - 24).attr('y', 9).attr('dy', '.35em').style('text-anchor', 'end')
+                .text(function (d) { console.log(d); return d; });
+    }
 }

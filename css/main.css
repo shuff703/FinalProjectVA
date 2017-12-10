@@ -30,3 +30,11 @@ main {
     padding:10px;
     font-size:.65em;
 }
+
+#vis1 {
+    width: 50%;
+}
+
+#vis1 > svg > g {
+    width: 100%;
+}
