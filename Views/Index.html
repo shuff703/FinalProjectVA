@@ -209,8 +209,8 @@
                 $('h2').html('Your Tray');
                 $('#vis1').html('');
                 barChart.draw(CurrentFoodTable.rows().data());
-                $('#vis2').html('');
-                bubbleChart.draw(CurrentFoodTable.rows().data());
+                /*$('#vis2').html('');
+                bubbleChart.draw(CurrentFoodTable.rows().data());*/
             } else if (jsonData != null) {
                 $('div.col-md-10').eq('0').hide();
                 scatterplot(jsonData);
