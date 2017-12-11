@@ -338,71 +338,222 @@ function scatterplot(jData) {
 }
 
 var barChart = {
-    margin: { top: 20, right: 50, bottom:300, left: 100 },
-    width: function () { return $('#vis1').outerWidth(); },
-    height: function () { return 1000 - this.margin.top - this.margin.bottom },
+    margin: {
+        top: 20,
+        right: 50,
+        bottom: 300,
+        left: 100
+    },
+    width: function () {
+        return $('#vis1').outerWidth();
+    },
+    height: function () {
+        return 1000 - this.margin.top - this.margin.bottom
+    },
     svg: function () {
-            return d3.select('#vis1').append('svg').attr('width', this.width()+this.margin.left+this.margin.right)
-            .attr('height', this.height+this.margin.top+this.margin.bottom).append('g')
-            .attr('transform', 'translate('+this.margin.left+','+this.margin.top+')')
+        return d3.select('#vis1').append('svg').attr('width', this.width() + this.margin.left + this.margin.right)
+            .attr('height', this.height + this.margin.top + this.margin.bottom).append('g')
+            .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')')
     },
     draw: function (jData) {
         var headers = ['fat', 'cholesterol', 'sodium', 'carbs', 'fiber', 'sugar', 'protein', 'vitaminA', 'vitaminC', 'calcium', 'iron'];
-        var layers = d3.layout.stack()(headers.map(function(header) {
-        return jData.map(function(d) {
-          return {x: d.item, y: +d[header]};
-        });
-    }));
+        var layers = d3.layout.stack()(headers.map(function (header) {
+            return jData.map(function (d) {
+                return {
+                    x: d.item,
+                    y: +d[header]
+                };
+            });
+        }));
         /*var layers = d3.layout.stack(function (d){
             return { x: d.item, y: d.fat+d.cholesterol+d.sodium+d.carbs+d.fiber+d.sugar+d.protein+d.vitaminA+d.vitaminC+d.calcium+d.iron };                                             
         });*/
         var svg = d3.select('#vis1').append('svg').attr("preserveAspectRatio", "xMinYMin meet")
-                    .attr("viewBox", "0 0 1000 1000").append('g')
-                    .attr('transform', 'translate('+this.margin.left+','+this.margin.top+')');
-        var yGroupMax = d3.max(layers, function (layer) { return d3.max(layer, function (d) { return d.y; } )});
-        var yMax = d3.max(layers, function (layer) { return d3.max(layer, function (d) { return d.y0 + d.y; })});
-        
+            .attr("viewBox", "0 0 1000 1000").append('g')
+            .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
+        var yGroupMax = d3.max(layers, function (layer) {
+            return d3.max(layer, function (d) {
+                return d.y;
+            })
+        });
+        var yMax = d3.max(layers, function (layer) {
+            return d3.max(layer, function (d) {
+                return d.y0 + d.y;
+            })
+        });
+
         var xScale = d3.scale.ordinal()
-                        .domain(layers[0].map(function (d) { return d.x; }))
-                        .rangeRoundBands([25, 500], .08);
-        
+            .domain(layers[0].map(function (d) {
+                return d.x;
+            }))
+            .rangeRoundBands([25, 500], .08);
+
         var y = d3.scale.linear()
-                    .domain([0, yMax])
-                    .range([this.height(), 0]);
-        
+            .domain([0, yMax])
+            .range([this.height(), 0]);
+
         var color = d3.scale.ordinal().domain(headers).range(['#edc948', '#4e79a7', '#f28e2b', '#b07aa1', '#e15759', '#ff9da7', '#76b7b2', '#9c755f', '#59a14f', '#bab0ac', '#000000']);
-        
+
         var xAxis = d3.svg.axis().scale(xScale).tickSize(0).tickPadding(6).orient('bottom');
-        
+
         var yAxis = d3.svg.axis().scale(y).orient('left');
-        
+
         var layer = svg.selectAll('.layer').data(layers).enter().append('g').attr('class', 'layer')
-                        .style('fill', function (d, i) { return color(i); });
-        
-        var rect = layer.selectAll('rect').data(function (d) { return d; }).enter().append('rect')
-                        .attr('x', function (d) { return xScale(d.x)})
-                        .attr('y', 380)
-                        .attr('width', xScale.rangeBand())
-                        .attr('height', 0);
-        
-        rect.transition().delay(function (d, i) { return i * 10 })
-                .attr('y', function (d) { return y(d.y0 + d.y); })
-                .attr('height', function (d) { return y(d.y0) - y(d.y0 + d.y); });
-        
+            .style('fill', function (d, i) {
+                return color(i);
+            });
+
+        var rect = layer.selectAll('rect').data(function (d) {
+                return d;
+            }).enter().append('rect')
+            .attr('x', function (d) {
+                return xScale(d.x)
+            })
+            .attr('y', 380)
+            .attr('width', xScale.rangeBand())
+            .attr('height', 0);
+
+        rect.transition().delay(function (d, i) {
+                return i * 10
+            })
+            .attr('y', function (d) {
+                return y(d.y0 + d.y);
+            })
+            .attr('height', function (d) {
+                return y(d.y0) - y(d.y0 + d.y);
+            });
+
         svg.append('g').attr('class', 'x axis').attr('transform', 'translate(0,' + this.height() + ')')
-                .call(xAxis).selectAll('text').style('text-anchor', 'end').attr('dx', '-.8em').attr('dy', '.15em')
-                .attr('transform', function (d) { return 'rotate(-45)'; });
-        
+            .call(xAxis).selectAll('text').style('text-anchor', 'end').attr('dx', '-.8em').attr('dy', '.15em')
+            .attr('transform', function (d) {
+                return 'rotate(-45)';
+            });
+
         svg.append('g').attr('class', 'y axis').attr('transform', 'translate(20, 0)').call(yAxis).append('text')
-                .attr('transform', 'rotate(-90)').attr({ 'x': -150, 'y': -70 }).attr('dy', '.75em')
-                .style('text-anchor', 'end').text('Items');
-        
+            .attr('transform', 'rotate(-90)').attr({
+                'x': -150,
+                'y': -70
+            }).attr('dy', '.75em')
+            .style('text-anchor', 'end').text('Items');
+
         var legend = svg.selectAll('.legend').data(headers.slice().reverse()).enter().append('g').attr('class', 'legend')
-                            .attr('transform', function (d, i) { return 'translate(-20, ' + i * 20 + ')' });
-        
-        legend.append('rect').attr('x', jData.length*this.width()/jData.length - 18).attr('width', 18).attr('height', 18).style('fill', color);
-        
-        legend.append('text').attr('x', jData.length*this.width()/jData.length - 24).attr('y', 9).attr('dy', '.35em').style('text-anchor', 'end')
-                .text(function (d) { console.log(d); return d; });
+            .attr('transform', function (d, i) {
+                return 'translate(-20, ' + i * 20 + ')'
+            });
+
+        legend.append('rect').attr('x', jData.length * this.width() / jData.length - 18).attr('width', 18).attr('height', 18).style('fill', color);
+
+        legend.append('text').attr('x', jData.length * this.width() / jData.length - 24).attr('y', 9).attr('dy', '.35em').style('text-anchor', 'end')
+            .text(function (d) {
+                return d;
+            });
     }
+
 }
+/*var bubbleChart = {
+    metric: function () {
+        return $('#DiameterSelect').val();
+    },
+    diameter: 960,
+    format: function () {
+        d3.format(",d")
+    },
+    color: function () {
+        return d3.scale.category20c()
+    },
+    bubble: function () {
+        return d3.layout.pack()
+            .sort(null)
+            .size([this.diameter, this.diameter])
+            .value(function (d) {
+                return d.calories;
+            })
+            .padding(1.5);
+    },
+    svg: function () {
+        return d3.select("#vis2").append("svg")
+            .attr("width", this.diameter)
+            .attr("height", this.diameter)
+            .attr("class", "bubble");
+    },
+    tooltip: function () {
+        return d3.select("body")
+            .append("div")
+            .style("position", "absolute")
+            .style("z-index", "10")
+            .style("visibility", "hidden")
+            .style("color", "white")
+            .style("padding", "8px")
+            .style("background-color", "rgba(0, 0, 0, 0.75)")
+            .style("border-radius", "6px")
+            .style("font", "12px sans-serif")
+            .text("tooltip");
+    },
+
+    draw: function (jData) {
+
+        var nodes = d3.layout.hierarchy(jData)
+        //.sum(function(d) { return d.calories; });
+        var node = bubbleChart.svg().selectAll(".node")
+            .data(bubbleChart.bubble().nodes(jData))
+            .enter().append("g")
+            .attr("class", "node")
+            .attr("transform", function (d) {
+            console.log(d);
+            return "translate(" + d.x + "," + d.y + ")";
+        });
+
+        node.append("circle")
+            .attr("r", function (d) {
+                console.log(d);
+                return d.sodium;
+            })
+            .style("fill", function (d) {
+                return bubbleChart.color(d.category);
+            })
+            .on("mouseover", function (d) {
+                tooltip.text(d.className + ": " + format(d.value));
+                tooltip.style("visibility", "visible");
+            })
+            .on("mousemove", function () {
+                return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+            })
+            .on("mouseout", function () {
+                return tooltip.style("visibility", "hidden");
+            });
+
+        node.append("text")
+            .attr("dy", ".3em")
+            .style("text-anchor", "middle")
+            .style("pointer-events", "none")
+            .text(function (d) {
+                return d.item;
+            });
+    },
+
+    // Returns a flattened hierarchy containing all leaf nodes under the root.
+    classes: function (root) {
+        var classes = [];
+
+        function recurse(name, node) {
+            if (node.children) node.children.forEach(function (child) {
+                recurse(node.name, child);
+            });
+            else classes.push({
+                packageName: name,
+                className: node.name,
+                value: node.size
+            });
+        }
+
+        recurse(null, root);
+        return {
+            children: classes
+        };
+    },
+    final: function () {
+        d3.select(self.frameElement).style("height", diameter + "px");
+    }
+
+
+}*/

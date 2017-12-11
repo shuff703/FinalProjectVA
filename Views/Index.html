@@ -152,12 +152,15 @@
                 </div>
             </div>
         </div>
-        <div id="vis1" class="col-md-10 offset-md-1">
-            <p>No Food Added</p>
+        <div style="display:inline-flex">
+            <div id="vis1">
+                <p>No Food Added</p>
+            </div>
+            <div id="vis2" style="float:right">
+                <p></p>
+            </div>
         </div>
-        <div id="vis2" class="col-md-10 offset-md-1">
-            <p></p>
-        </div>
+
     </main>
     <hr />
     <footer class="container">
@@ -206,14 +209,16 @@
                 $('h2').html('Your Tray');
                 $('#vis1').html('');
                 barChart.draw(CurrentFoodTable.rows().data());
+                $('#vis2').html('');
+                bubbleChart.draw(CurrentFoodTable.rows().data());
             } else if (jsonData != null) {
                 $('div.col-md-10').eq('0').hide();
                 scatterplot(jsonData);
                 $('h2').html('Explore the Menu');
             }
         });
-        
-        $(window).on('resize', function () {
+
+        $(window).on('resize', function() {
             $('#vis1').html('');
             barChart.draw(CurrentFoodTable.rows().data());
         })
@@ -233,13 +238,13 @@
             var tr = $(this).closest('tr');
             CurrentFoodTable.row(tr).remove().draw();
         });
-        
-        $('#xLabel').on('change', function () {
-           CurrentFoodTable.draw(); 
+
+        $('#xLabel').on('change', function() {
+            CurrentFoodTable.draw();
         });
-        
-        $('#yLabel').on('change', function () {
-           CurrentFoodTable.draw(); 
+
+        $('#yLabel').on('change', function() {
+            CurrentFoodTable.draw();
         });
     </script>
 </body>

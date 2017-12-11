@@ -31,7 +31,7 @@ main {
     font-size:.65em;
 }
 
-#vis1 {
+#vis1, #vis2 {
     width: 50%;
 }
 
