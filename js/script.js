@@ -450,31 +450,13 @@ var barChart = {
     }
 
 }
-/*var bubbleChart = {
+var bubbleChart = {
     metric: function () {
         return $('#DiameterSelect').val();
     },
     diameter: 960,
     format: function () {
         d3.format(",d")
-    },
-    color: function () {
-        return d3.scale.category20c()
-    },
-    bubble: function () {
-        return d3.layout.pack()
-            .sort(null)
-            .size([this.diameter, this.diameter])
-            .value(function (d) {
-                return d.calories;
-            })
-            .padding(1.5);
-    },
-    svg: function () {
-        return d3.select("#vis2").append("svg")
-            .attr("width", this.diameter)
-            .attr("height", this.diameter)
-            .attr("class", "bubble");
     },
     tooltip: function () {
         return d3.select("body")
@@ -492,24 +474,42 @@ var barChart = {
 
     draw: function (jData) {
 
-        var nodes = d3.layout.hierarchy(jData)
+        var svg = d3.select("#vis2").append("svg")
+            .attr("width", $('#vis2').width())
+            .attr("height", 500)
+            .attr("class", "bubble")
+            .attr("preserveAspectRatio", "xMinYMin meet")
+            .attr("viewBox", "0 0 1000 1000").append('g');
+
+        var pack = d3.layout.pack()
+            .size([500, 500])
+            .padding(1.5);
+
+        console.log(jData.children);
+        var nodes = pack.nodes(jData);
+        console.log(nodes);
+
+        var nodes = pack.nodes(jData);
+
+        console.log(nodes);
+
         //.sum(function(d) { return d.calories; });
-        var node = bubbleChart.svg().selectAll(".node")
-            .data(bubbleChart.bubble().nodes(jData))
+        var node = svg.selectAll(".node")
+            .data(pack.nodes(jData))
             .enter().append("g")
             .attr("class", "node")
             .attr("transform", function (d) {
-            console.log(d);
-            return "translate(" + d.x + "," + d.y + ")";
-        });
+                console.log(d);
+                return "translate(" + d.x + "," + d.y + ")";
+            });
 
         node.append("circle")
             .attr("r", function (d) {
                 console.log(d);
-                return d.sodium;
+                return d.r;
             })
-            .style("fill", function (d) {
-                return bubbleChart.color(d.category);
+            .attr('class', function (d) {
+                return d.category;
             })
             .on("mouseover", function (d) {
                 tooltip.text(d.className + ": " + format(d.value));
@@ -529,6 +529,9 @@ var barChart = {
             .text(function (d) {
                 return d.item;
             });
+
+
+
     },
 
     // Returns a flattened hierarchy containing all leaf nodes under the root.
@@ -556,4 +559,4 @@ var barChart = {
     }
 
 
-}*/
+}

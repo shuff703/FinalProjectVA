@@ -32,9 +32,27 @@ main {
 }
 
 #vis1, #vis2 {
-    width: 50%;
+    width: 49%;
 }
-
+#vis2 {
+    float:right;
+}
 #vis1 > svg > g {
     width: 100%;
+}
+
+.Smoothies {
+    fill: red;
+}
+.Beef {
+    fill: blue;
+}
+.all {
+    fill: gray;
+}
+.Coffee {
+    fill: brown;
+}
+#vis2 circle {
+    transparency: 0.5;
 }

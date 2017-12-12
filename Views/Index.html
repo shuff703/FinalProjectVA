@@ -152,7 +152,7 @@
                 </div>
             </div>
         </div>
-        <div style="display:inline-flex">
+        <div style="display:inline-flex; width:100%">
             <div id="vis1">
                 <p>No Food Added</p>
             </div>
@@ -209,8 +209,26 @@
                 $('h2').html('Your Tray');
                 $('#vis1').html('');
                 barChart.draw(CurrentFoodTable.rows().data());
-                /*$('#vis2').html('');
-                bubbleChart.draw(CurrentFoodTable.rows().data());*/
+                currentData = CurrentFoodTable.rows().data();
+                var bubbleData = [];
+                var totalCal = 0;
+                for (var i = 0; i < currentData.length; i++) {
+                    totalCal += currentData[i].calories;
+                    bubbleData[i] = {
+                        name: currentData[i].item,
+                        value: currentData[i].calories,
+                        category: currentData[i].category
+                    };
+                }
+                var root = {
+                    name: 'Your Tray',
+                    category: 'all',
+                    value: totalCal,
+                    children: bubbleData
+                }
+                console.log(root);
+                $('#vis2').html('');
+                bubbleChart.draw(root);
             } else if (jsonData != null) {
                 $('div.col-md-10').eq('0').hide();
                 scatterplot(jsonData);
