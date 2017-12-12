@@ -4,7 +4,7 @@ var AllFoodTable = null;
 var CurrentFoodTable = null;
 $(document).ready(function () {
     $.ajax({
-        url: '/Data/menu.csv',
+        url: '/shuff8/FinalProjectVA/Data/menu.csv',
         type: 'GET',
         dataType: 'text',
         success: function (data) {
@@ -76,7 +76,7 @@ $(document).ready(function () {
             {
                 width: '5%',
                 render: function (data, type, row) {
-                    return '<img src="/Images/close_red.png" class="removeItem" width="15px" />';
+                    return '<img src="/shuff8/FinalProjectVA/Images/close_red.png" class="removeItem" width="15px" />';
                 }
             },
             {
@@ -205,7 +205,7 @@ function scatterplot(jData) {
             bottom: 30,
             left: 40
         },
-        width = 960 - margin.left - margin.right,
+        width = 1000,
         height = 500 - margin.top - margin.bottom;
 
     // setup x 
@@ -451,13 +451,11 @@ var barChart = {
 
 }
 var bubbleChart = {
-    metric: function () {
-        return $('#DiameterSelect').val();
-    },
     diameter: 960,
     format: function () {
         d3.format(",d")
     },
+    
     tooltip: function () {
         return d3.select("body")
             .append("div")
@@ -473,6 +471,12 @@ var bubbleChart = {
     },
 
     draw: function (jData) {
+        
+        color = d3.scale.category10();
+        
+        var cValue = function (d) {
+            return d.category;
+        }
 
         var svg = d3.select("#vis2").append("svg")
             .attr("width", $('#vis2').width())
@@ -508,26 +512,26 @@ var bubbleChart = {
                 console.log(d);
                 return d.r;
             })
-            .attr('class', function (d) {
-                return d.category;
+            .style('fill', function(d) {
+                return color(cValue(d));
             })
             .on("mouseover", function (d) {
-                tooltip.text(d.className + ": " + format(d.value));
-                tooltip.style("visibility", "visible");
+                bubbleChart.tooltip().text(d.name + ": " + d.value + ' Calories');
+                bubbleChart.tooltip().style("visibility", "visible");
             })
             .on("mousemove", function () {
-                return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+                return bubbleChart.tooltip().style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
             })
             .on("mouseout", function () {
-                return tooltip.style("visibility", "hidden");
-            });
+                return bubbleChart.tooltip().style("visibility", "hidden");
+        });
 
         node.append("text")
             .attr("dy", ".3em")
             .style("text-anchor", "middle")
             .style("pointer-events", "none")
             .text(function (d) {
-                return d.item;
+                return d.name;
             });
 
 

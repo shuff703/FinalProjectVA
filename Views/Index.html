@@ -5,23 +5,23 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <!--jQuery-->
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
     <!--Popper for Bootstrap because webstorm doesnt add it automatically-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
     <!--Bootstrap-->
-    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/css/bootstrap-grid.min.css" />
-    <link rel="stylesheet" href="/css/bootstrap-reboot.min.css" />
+    <script type="text/javascript" src="/shuff8/FinalProjectVA/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/shuff8/FinalProjectVA/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="/shuff8/FinalProjectVA/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/shuff8/FinalProjectVA/css/bootstrap-grid.min.css" />
+    <link rel="stylesheet" href="/shuff8/FinalProjectVA/css/bootstrap-reboot.min.css" />
     <!--jQuery UI-->
-    <link href="/jquery-ui-1.12.1/jquery-ui.css" rel="stylesheet" />
-    <script type="text/javascript" src="/jquery-ui-1.12.1/jquery-ui.js"></script>
+    <link href="/shuff8/FinalProjectVA/jquery-ui-1.12.1/jquery-ui.css" rel="stylesheet" />
+    <script type="text/javascript" src="/shuff8/FinalProjectVA/jquery-ui-1.12.1/jquery-ui.js"></script>
     <!--DataTables-->
     <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
     <script src="https://d3js.org/d3.v3.min.js"></script>
-    <link rel="stylesheet" href="/css/main.css" />
-    <script type="text/javascript" src="/js/script.js"></script>
+    <link rel="stylesheet" href="/shuff8/FinalProjectVA/css/main.css" />
+    <script type="text/javascript" src="/shuff8/FinalProjectVA/js/script.js"></script>
 
 </head>
 
@@ -30,7 +30,7 @@
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="#">ComeUpWithAName</a>
+                    <a class="navbar-brand" href="#">Menu Data</a>
                 </div>
                 <ul class="nav navbar-nav">
                     <li class="active">
@@ -150,6 +150,34 @@
                         <option value="iron">Iron</option>
                     </select>
                 </div>
+                <div class="col-md-4">
+                    <label for="bubbleFilter">Bubble Metric:</label>
+                    <select id="bubbleFilter" name="bubbleFilter">
+                        <option value="calories">Calories</option>
+                        <option value="caloriesFat">
+                            Calories from Fat
+                        </option>
+                        <option value="fat">Fat</option>
+                        <option value="fatPercent">Fat %dv</option>
+                        <option value="saturatedFat">Saturated Fat</option>
+                        <option value="saturatedPercent">Saturated Fat %dv</option>
+                        <option value="transFat">Trans Fat</option>
+                        <option value="cholesterol">Cholesterol</option>
+                        <option value="cholesterolPercent">Cholesterol %dv</option>
+                        <option value="sodium">Sodium</option>
+                        <option value="sodiumPercent">Sodium %dv</option>
+                        <option value="carbs">Carbohydrates</option>
+                        <option value="carbPercent">Carbohydrates %dv</option>
+                        <option value="fiber">Fiber</option>
+                        <option value="fiberPercent">Fiber %dv</option>
+                        <option value="sugar">Sugar</option>
+                        <option value="protein">Protein</option>
+                        <option value="vitaminA">Vitamin A</option>
+                        <option value="vitaminC">Vitamin C</option>
+                        <option value="calcium">Calcium</option>
+                        <option value="iron">Iron</option>
+                    </select>
+                </div>
             </div>
         </div>
         <div style="display:inline-flex; width:100%">
@@ -164,7 +192,7 @@
     </main>
     <hr />
     <footer class="container">
-
+        Scott Huff
     </footer>
     <script>
         var currentData = [];
@@ -200,10 +228,37 @@
             AllFoodTable.draw();
             event.preventDefault();
         });
+        
+        $('#bubbleFilter').on('change', function () {
+           var filter = $('#bubbleFilter').val();
+            currentData = CurrentFoodTable.rows().data();
+                var bubbleData = [];
+                var totalCal = 0;
+                for (var i = 0; i < currentData.length; i++) {
+                    totalCal += currentData[i].calories;
+                    bubbleData[i] = {
+                        name: currentData[i].item,
+                        value: currentData[i][filter],
+                        category: currentData[i].category
+                    };
+                    console.log(bubbleData);
+                }
+                var root = {
+                    name: 'Your Tray',
+                    category: 'all',
+                    value: totalCal,
+                    children: bubbleData
+                }
+                console.log(root);
+                $('#vis2').html('');
+                bubbleChart.draw(root);
+        });
 
         $('#CurrentFood').on('draw.dt', function() {
 
             if (CurrentFoodTable != null && CurrentFoodTable.page.info().recordsTotal > 0) {
+                $('#vis1').show();
+                $('#vis2').show();
                 console.log(CurrentFoodTable.page.info().recordsTotal);
                 scatterplot(CurrentFoodTable.rows().data());
                 $('h2').html('Your Tray');
@@ -229,10 +284,13 @@
                 console.log(root);
                 $('#vis2').html('');
                 bubbleChart.draw(root);
+                $('')
             } else if (jsonData != null) {
                 $('div.col-md-10').eq('0').hide();
                 scatterplot(jsonData);
                 $('h2').html('Explore the Menu');
+                $('#vis1').hide();
+                $('#vis2').hide();
             }
         });
 

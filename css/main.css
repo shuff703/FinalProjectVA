@@ -1,4 +1,4 @@
-nav.navbar, button{
+nav.navbar, button, footer{
     background:#f2bf35;
 }
 
@@ -8,6 +8,10 @@ nav.navbar a {
 
 main {
     padding-top: 25px;
+}
+
+body {
+    color: none;
 }
 
 #CurrentFood, #vis1, #vis2 {
@@ -41,18 +45,6 @@ main {
     width: 100%;
 }
 
-.Smoothies {
-    fill: red;
-}
-.Beef {
-    fill: blue;
-}
-.all {
-    fill: gray;
-}
-.Coffee {
-    fill: brown;
-}
-#vis2 circle {
-    transparency: 0.5;
+.y {
+    cx: 250px !important;
 }
